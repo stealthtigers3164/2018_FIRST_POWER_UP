@@ -7,7 +7,10 @@
 
 package org.usfirst.frc.team3164.robot;
 
+import edu.wpi.first.wpilibj.GamepadBase;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,6 +27,13 @@ public class Robot extends IterativeRobot {
 	private String m_autoSelected;
 	private SendableChooser<String> m_chooser = new SendableChooser<>();
 
+	private Spark frontLeft;
+	private Spark frontRight;
+	private Spark backLeft;
+	private Spark backRight;
+	
+	private Gamepad pad;
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -33,6 +43,15 @@ public class Robot extends IterativeRobot {
 		m_chooser.addDefault("Default Auto", kDefaultAuto);
 		m_chooser.addObject("My Auto", kCustomAuto);
 		SmartDashboard.putData("Auto choices", m_chooser);
+		frontLeft = new Spark(2);
+		backLeft = new Spark(1);
+		frontRight = new Spark(3);
+		backRight = new Spark(0);
+		
+		frontLeft.setInverted(true);
+		backLeft.setInverted(true);
+		
+		pad = new Gamepad(0);
 	}
 
 	/**
@@ -75,6 +94,29 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		double stickDataX = pad.sticks.RIGHT_X.getRaw();
+		double stickDataY = pad.sticks.RIGHT_Y.getRaw();
+		
+		if (stickDataX != 0 &&
+			stickDataY == 0) {
+			frontLeft.set(stickDataX);
+			backLeft.set(-stickDataX);
+			
+			frontRight.set(-stickDataX);
+			backRight.set(stickDataX);
+		} else if (stickDataX == 0 &&
+				   stickDataY != 0) {
+			frontLeft.set(stickDataY);
+			backLeft.set(stickDataY);
+			frontRight.set(stickDataY);
+			backRight.set(stickDataY);			
+		} else {
+			frontLeft.set(stickDataX);
+			backLeft.set(-stickDataX);
+			
+			frontRight.set(-stickDataX);
+			backRight.set(stickDataX);
+		}
 	}
 
 	/**
