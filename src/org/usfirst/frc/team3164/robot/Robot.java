@@ -7,122 +7,61 @@
 
 package org.usfirst.frc.team3164.robot;
 
-import edu.wpi.first.wpilibj.GamepadBase;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.properties file in the
- * project.
- */
 public class Robot extends IterativeRobot {
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
-	private String m_autoSelected;
-	private SendableChooser<String> m_chooser = new SendableChooser<>();
-
-	private Spark frontLeft;
-	private Spark frontRight;
-	private Spark backLeft;
-	private Spark backRight;
-	
 	private Gamepad pad;
+
+	private Driver m_driver;
+	private Gamepad m_gamePad;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
-		frontLeft = new Spark(2);
-		backLeft = new Spark(1);
-		frontRight = new Spark(3);
-		backRight = new Spark(0);
-		
-		frontLeft.setInverted(true);
-		backLeft.setInverted(true);
-		
-		pad = new Gamepad(0);
+		m_driver = new Driver();
+		m_gamePad = new Gamepad(0);
+		Watchcat.init();
 	}
-
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different autonomous modes using the dashboard. The sendable
-	 * chooser code works with the Java SmartDashboard. If you prefer the
-	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-	 * getString line to get the auto name from the text box below the Gyro
-	 *
-	 * <p>You can add additional auto modes by adding additional comparisons to
-	 * the switch structure below with additional strings. If using the
-	 * SendableChooser make sure to add them to the chooser code above as well.
-	 */
-	@Override
+	
 	public void autonomousInit() {
-		m_autoSelected = m_chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + m_autoSelected);
 	}
 
-	/**
-	 * This function is called periodically during autonomous.
-	 */
-	@Override
 	public void autonomousPeriodic() {
-		switch (m_autoSelected) {
-			case kCustomAuto:
-				// Put custom auto code here
-				break;
-			case kDefaultAuto:
-			default:
-				// Put default auto code here
-				break;
-		}
 	}
 
-	/**
-	 * This function is called periodically during operator control.
-	 */
-	@Override
 	public void teleopPeriodic() {
-		double stickDataX = pad.sticks.RIGHT_X.getRaw();
-		double stickDataY = pad.sticks.RIGHT_Y.getRaw();
-		
-		if (stickDataX != 0 &&
-			stickDataY == 0) {
-			frontLeft.set(stickDataX);
-			backLeft.set(-stickDataX);
-			
-			frontRight.set(-stickDataX);
-			backRight.set(stickDataX);
-		} else if (stickDataX == 0 &&
-				   stickDataY != 0) {
-			frontLeft.set(stickDataY);
-			backLeft.set(stickDataY);
-			frontRight.set(stickDataY);
-			backRight.set(stickDataY);			
-		} else {
-			frontLeft.set(stickDataX);
-			backLeft.set(-stickDataX);
-			
-			frontRight.set(-stickDataX);
-			backRight.set(stickDataX);
-		}
+//<<<<<<< Updated upstream
+//		double stickDataX = pad.sticks.RIGHT_X.getRaw();
+//		double stickDataY = pad.sticks.RIGHT_Y.getRaw();
+//		
+//		if (stickDataX != 0 &&
+//			stickDataY == 0) {
+//			frontLeft.set(stickDataX);
+//			backLeft.set(-stickDataX);
+//			
+//			frontRight.set(-stickDataX);
+//			backRight.set(stickDataX);
+//		} else if (stickDataX == 0 &&
+//				   stickDataY != 0) {
+//			frontLeft.set(stickDataY);
+//			backLeft.set(stickDataY);
+//			frontRight.set(stickDataY);
+//			backRight.set(stickDataY);			
+//		} else {
+//			frontLeft.set(stickDataX);
+//			backLeft.set(-stickDataX);
+//			
+//			frontRight.set(-stickDataX);
+//			backRight.set(stickDataX);
+//		}
+		m_driver.update(m_gamePad);
 	}
 
-	/**
-	 * This function is called periodically during test mode.
-	 */
-	@Override
 	public void testPeriodic() {
 	}
 }
