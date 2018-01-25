@@ -15,28 +15,35 @@ public class Driver {
 	}
 
 	public void update(Gamepad pad) {
-		double y = pad.sticks.LEFT_Y.getRaw();
-		double x = pad.sticks.LEFT_X.getRaw();
-		
-		if (y != 0 && 
-			x == 0) {
-			m_frontLeft.setPower(y);
-			m_frontRight.setPower(y);
-			m_backLeft.setPower(y);
-			m_backRight.setPower(y);
-		} else if (x != 0 &&
-				y == 0) {
-			m_frontLeft.setPower(-x);
-			m_frontRight.setPower(x);
+		double left_y = pad.sticks.LEFT_Y.getRaw();
+		double left_x = pad.sticks.LEFT_X.getRaw();
+		double right_y = pad.sticks.RIGHT_Y.getRaw();
+		double right_x = pad.sticks.RIGHT_X.getRaw();
 
-			m_backLeft.setPower(x);
-			m_backRight.setPower(-x);
+		if (right_y != 0 && 
+			right_x == 0) {
+			m_frontRight.setPower(right_y);
+			m_backRight.setPower(right_y);
+		}else if (right_x != 0 &&
+				right_x == 0) {
+			m_frontRight.setPower(right_x);
+			m_backRight.setPower(-right_x);			
 		} else {
-			m_frontLeft.setPower(-x);
-			m_backLeft.setPower(x / 2);
-
-			m_frontRight.setPower(x / 2);
-			m_backRight.setPower(-x);			
+			m_frontRight.setPower(right_x / 2);
+			m_backRight.setPower(-right_x);			
+		}
+		
+		if (left_y != 0 && 
+			left_x == 0) {
+			m_frontLeft.setPower(left_y);
+			m_backLeft.setPower(left_y);
+		} else if (left_x != 0 &&
+				left_y == 0) {
+			m_frontLeft.setPower(-left_x);
+			m_backLeft.setPower(left_x);
+		} else {
+			m_frontLeft.setPower(-left_x);
+			m_backLeft.setPower(left_x / 2);
 		}
 	}
 }
