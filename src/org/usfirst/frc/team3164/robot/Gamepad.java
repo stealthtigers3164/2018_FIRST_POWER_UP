@@ -1,6 +1,8 @@
 package org.usfirst.frc.team3164.robot;
 
+
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Gamepad {
 	public Joystick jstick;
