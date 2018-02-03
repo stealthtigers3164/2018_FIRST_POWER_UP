@@ -1,11 +1,15 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package org.usfirst.frc.team3164.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.drive.*;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj.CameraServer;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -14,10 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends IterativeRobot {
-	private static final String kDefaultAuto = "Default";
-	private static final String kCustomAuto = "My Auto";
-	private String m_autoSelected;
-	private SendableChooser<String> m_chooser = new SendableChooser<>();
 	private Spark frontLeft;
 	private Spark frontRight;
 	private Spark backLeft;
@@ -32,16 +32,14 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void robotInit() {
-		m_chooser.addDefault("Default Auto", kDefaultAuto);
-		m_chooser.addObject("My Auto", kCustomAuto);
-		SmartDashboard.putData("Auto choices", m_chooser);
-		
 		frontLeft = new Spark(2);
 		frontRight = new Spark(1);
 		backLeft = new Spark(3);
 		backRight = new Spark(0);
 		mecDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
 		padGame = new Gamepad(0);
+		CameraServer.getInstance().startAutomaticCapture("cam0", 0);
+		CameraServer.getInstance().startAutomaticCapture("cam1", 1);
 	}
 	
 	/**
@@ -57,10 +55,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		m_autoSelected = m_chooser.getSelected();
-		// autoSelected = SmartDashboard.getString("Auto Selector",
-		// defaultAuto);
-		System.out.println("Auto selected: " + m_autoSelected);
 	}
 
 	/**
@@ -69,15 +63,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		switch (m_autoSelected) {
-			case kCustomAuto:
-				// Put custom auto code here
-				break;
-			case kDefaultAuto:
-			default:
-				// Put default auto code here
-				break;
-		}
 	}
 
 	/**
@@ -85,25 +70,26 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		double xSpeed = -padGame.sticks.RIGHT_X.getRaw() * .5;
-		double ySpeed = -padGame.sticks.RIGHT_Y.getRaw() * .5;
-		double zSpeed = -padGame.sticks.LEFT_X.getRaw() * .5;
+//		double xSpeed = -padGame.sticks.RIGHT_X.getRaw() * .5;
+//		double ySpeed = -padGame.sticks.RIGHT_Y.getRaw() * .5;
+//		double zSpeed = -padGame.sticks.LEFT_X.getRaw() * .5;
+//		
+//		double speedBoost = padGame.trigger.getRightVal() * .5;
+//		double speedDecrease = padGame.trigger.getLeftVal() * .5;
+//		
+//		mecDrive.driveCartesian(ySpeed, xSpeed, zSpeed, speedBoost, speedDecrease);
 		
-		double speedBoost = padGame.trigger.getRightVal() * .5;
-		double speedDecrease = padGame.trigger.getLeftVal() * .5;
 		
-		int xSign = (xSpeed > 0) ? 1 : -1;
-		int ySign = (ySpeed > 0) ? 1 : -1;
-		int zSign = (zSpeed > 0) ? 1 : -1;
+		double speedBoost = padGame.trigger.getRightVal() + 1;
+		double speedDecrease = padGame.trigger.getLeftVal() +1;
+
+		double xSpeed = -padGame.sticks.RIGHT_X.getRaw() * .5 *speedBoost / speedDecrease;
+		double ySpeed = -padGame.sticks.RIGHT_Y.getRaw() * .5 *speedBoost / speedDecrease;
+		double zSpeed = -padGame.sticks.LEFT_X.getRaw() * .5 *speedBoost / speedDecrease;
 		
-		xSpeed += speedBoost * xSign;
-		xSpeed -= speedDecrease * xSign;
-		ySpeed += speedBoost * ySign;
-		ySpeed -= speedDecrease * ySign;
-		zSpeed += speedBoost * zSign;
-		zSpeed -= speedDecrease * zSign;
+	mecDrive.driveCartesian(ySpeed, xSpeed, zSpeed, 0, 0);
+
 		
-		mecDrive.driveCartesian(ySpeed, xSpeed, zSpeed);
 	}
 
 	/**
