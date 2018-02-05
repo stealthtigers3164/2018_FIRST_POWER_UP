@@ -10,6 +10,8 @@ package org.usfirst.frc.team3164.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Timer;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -25,6 +27,9 @@ public class Robot extends IterativeRobot {
 	private MecanumDrive mecDrive;
 	private Gamepad padGame;
 	
+	private Timer timer;
+	private double startTime;
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -38,6 +43,7 @@ public class Robot extends IterativeRobot {
 		backRight = new Spark(0);
 		mecDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
 		padGame = new Gamepad(0);
+		padGame.sticks.setDeadzones();
 		CameraServer.getInstance().startAutomaticCapture("cam0", 0);
 		CameraServer.getInstance().startAutomaticCapture("cam1", 1);
 	}
@@ -55,14 +61,25 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		timer = new Timer();
+		hasStarted = false;
 	}
-
+	
+	private boolean hasStarted;
 	/**
 	 * This function is called periodically during autonomous.
 	 */
 
 	@Override
-	public void autonomousPeriodic() {
+	public void autonomousPeriodic() {		
+		if (!hasStarted) {
+			hasStarted = true;
+			timer.start();
+		}
+		
+		if (timer.get() < 5) {
+			mecDrive.driveCartesian(0, .3, 0, 0, 0);
+		}
 	}
 
 	/**
