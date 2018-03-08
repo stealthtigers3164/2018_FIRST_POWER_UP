@@ -7,11 +7,15 @@
 
 package org.usfirst.frc.team3164.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Spark;
+/**import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.CameraServer;
+import org.usfirst.frc.team3164.robot.Lift;**/
+import org.usfirst.frc.team3164.robot.Intake;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -20,33 +24,45 @@ import edu.wpi.first.wpilibj.Timer;
  * project.
  */
 public class Robot extends IterativeRobot {
+	//private SendableChooser<String> m_chooser = new SendableChooser<>();
 	private Spark frontLeft;
 	private Spark frontRight;
 	private Spark backLeft;
 	private Spark backRight;
 	private MecanumDrive mecDrive;
-	private Gamepad padGame;
-	
-	private Timer timer;
-	private double startTime;
+	private Gamepad j_gamepad;
+	private Gamepad p_gamepad;
+	//private Timer timer;
+	//private boolean hasStarted;
+	//private Lift lift;
+	//private Intake intake;
+	private Autonomous auto;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
 	 */
-	
+
 	@Override
-	public void robotInit() {
+	public void robotInit() {	
 		frontLeft = new Spark(2);
-		frontRight = new Spark(1);
-		backLeft = new Spark(3);
+		frontRight = new Spark(3);
+		backLeft = new Spark(1);
 		backRight = new Spark(0);
 		mecDrive = new MecanumDrive(frontLeft, backLeft, frontRight, backRight);
-		padGame = new Gamepad(0);
-		padGame.sticks.setDeadzones();
-		CameraServer.getInstance().startAutomaticCapture("cam0", 0);
-		CameraServer.getInstance().startAutomaticCapture("cam1", 1);
+		j_gamepad = new Gamepad(0);
+		p_gamepad = new Gamepad(1);
+		j_gamepad.sticks.setDeadzones();
+		p_gamepad.sticks.setDeadzones();
+		//p_gamepad = new Gamepad(1);
+		//lift = new Lift(4, 7);/**, encoder encoder**/
+		//intake = new Intake(6, 5);
+//		CameraServer.getInstance().startAutomaticCapture("cam0", 0);
+//		CameraServer.getInstance().startAutomaticCapture("cam1", 1);
+//		CameraServer.getInstance().startAutomaticCapture("cam2", 2);
 	}
+	
+	
 	
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
@@ -61,52 +77,49 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		timer = new Timer();
-		hasStarted = false;
+		auto = new Autonomous(mecDrive);
+		/**timer = new Timer();
+		hasStarted = false;**/
+		
 	}
-	
-	private boolean hasStarted;
+
 	/**
 	 * This function is called periodically during autonomous.
 	 */
 
 	@Override
-	public void autonomousPeriodic() {		
-		if (!hasStarted) {
+	public void autonomousPeriodic() {
+		auto.autoPath();
+		/**if (!hasStarted) {
 			hasStarted = true;
 			timer.start();
 		}
-		
-		if (timer.get() < 5) {
-			mecDrive.driveCartesian(0, .3, 0, 0, 0);
-		}
+		if (timer.get() < .8) {
+			mecDrive.driveCartesian(-0.5, 0, 0, 0, 0);
+		}**/
 	}
+
 
 	/**
 	 * This function is called periodically during operator control.
 	 */
 	@Override
 	public void teleopPeriodic() {
-//		double xSpeed = -padGame.sticks.RIGHT_X.getRaw() * .5;
-//		double ySpeed = -padGame.sticks.RIGHT_Y.getRaw() * .5;
-//		double zSpeed = -padGame.sticks.LEFT_X.getRaw() * .5;
-//		
-//		double speedBoost = padGame.trigger.getRightVal() * .5;
-//		double speedDecrease = padGame.trigger.getLeftVal() * .5;
-//		
-//		mecDrive.driveCartesian(ySpeed, xSpeed, zSpeed, speedBoost, speedDecrease);
-		
-		
-		double speedBoost = padGame.trigger.getRightVal() + 1;
-		double speedDecrease = padGame.trigger.getLeftVal() +1;
 
-		double xSpeed = -padGame.sticks.RIGHT_X.getRaw() * .5 *speedBoost / speedDecrease;
-		double ySpeed = -padGame.sticks.RIGHT_Y.getRaw() * .5 *speedBoost / speedDecrease;
-		double zSpeed = -padGame.sticks.LEFT_X.getRaw() * .5 *speedBoost / speedDecrease;
+		//lift.update(p_gamepad);
 		
-	mecDrive.driveCartesian(ySpeed, xSpeed, zSpeed, 0, 0);
+		double speedBoost = j_gamepad.trigger.getRightVal() + 1;
+		double speedDecrease = j_gamepad.trigger.getLeftVal() +1;
 
+		double xSpeed = -j_gamepad.sticks.RIGHT_Y.getRaw()  * 0.5 * speedBoost / speedDecrease;
+		double ySpeed = -j_gamepad.sticks.RIGHT_X.getRaw() * 0.5 * speedBoost / speedDecrease;
+		double zSpeed = -j_gamepad.sticks.LEFT_X.getRaw()  * 0.5 * speedBoost / speedDecrease;
 		
+		mecDrive.driveCartesian(ySpeed, xSpeed, zSpeed, 0, 0);
+		//intake.powerIntake(p_gamepad);
+
+
+		SmartDashboard.putNumber("joyStick", j_gamepad.sticks.RIGHT_X.getRaw());
 	}
 
 	/**

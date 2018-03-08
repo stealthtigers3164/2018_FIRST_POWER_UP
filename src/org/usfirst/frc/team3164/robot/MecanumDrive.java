@@ -65,7 +65,6 @@ public class MecanumDrive extends RobotDriveBase {
   private SpeedController m_rearLeftMotor;
   private SpeedController m_frontRightMotor;
   private SpeedController m_rearRightMotor;
-  private Gamepad padGame;
   
   private boolean m_reported = false;
 
@@ -184,21 +183,16 @@ public class MecanumDrive extends RobotDriveBase {
     return "MecanumDrive";
   }
 
-public void initSendable(SendableBuilder builder) {
-	// TODO Auto-generated method stub
-	
-}
-
-//  @Override
-//  public void initSendable(SendableBuilder builder) {
-//    builder.setSmartDashboardType("MecanumDrive");
-//    builder.addDoubleProperty("Front Left Motor Speed", m_frontLeftMotor::get,
-//        m_frontLeftMotor::set);
-//    builder.addDoubleProperty("Front Right Motor Speed", m_frontRightMotor::get,
-//        m_frontRightMotor::set);
-//    builder.addDoubleProperty("Rear Left Motor Speed", m_rearLeftMotor::get,
-//        m_rearLeftMotor::set);
-//    builder.addDoubleProperty("Rear Right Motor Speed", m_rearRightMotor::get,
-//        m_rearRightMotor::set);
-//  }
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("MecanumDrive");
+    builder.addDoubleProperty("Front Left Motor Speed", m_frontLeftMotor::get,
+        m_frontLeftMotor::set);
+    builder.addDoubleProperty("Front Right Motor Speed", m_frontRightMotor::get,
+        m_frontRightMotor::set);
+    builder.addDoubleProperty("Rear Left Motor Speed", m_rearLeftMotor::get,
+        m_rearLeftMotor::set);
+    builder.addDoubleProperty("Rear Right Motor Speed", m_rearRightMotor::get,
+        m_rearRightMotor::set);
+  }
 }

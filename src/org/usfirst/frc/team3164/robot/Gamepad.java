@@ -145,7 +145,7 @@ public class Gamepad {
 		 * @return enum dir of axis
 		 */
 		public LeftRightDir getDirection() {
-			return (this.getAxis() >=0 ? LeftRightDir.RIGHT : LeftRightDir.LEFT);
+			return (this.getAxis() > 0 ? LeftRightDir.RIGHT : LeftRightDir.LEFT);
 		}
 		
 		/**
@@ -249,7 +249,7 @@ public class Gamepad {
 		 * @return enum value, up or down
 		 */
 		public UpDownDir getDirection() {
-			return (this.getRaw() >=0 ? UpDownDir.UP : UpDownDir.DOWN);
+			return (this.getRaw() > 0 ? UpDownDir.UP : UpDownDir.DOWN);
 		}
 		
 		
